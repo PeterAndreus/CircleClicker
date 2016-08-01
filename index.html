@@ -1,10 +1,19 @@
 <html>
+<style>
+@font-face {
+    font-family: robotoFont;
+    src: url(NotoSans-Regular.ttf);
+}
+</style>
 <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 <script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
 <script>
 
   var circleR = 30;
   var circleCount = 20;
+  var startTime;
+  var textTimer = new createjs.Text("00.000 s", "100px robotoFont", randomColor());
+  var running = false;
   
   function getRandom(min, max) {
     return Math.random() * (max - min) + min;
@@ -32,7 +41,7 @@
     var max = document.body.clientHeight - object.y;
     
     var ran = getRandom(Math.max(genMin, min), Math.min(genMax, max));
-    
+      
     var result = object.y + ran;
     //console.log("Y:"+object.y+" \n"+min+"\n"+max+"\n"+ran+"\n"+result)
     return result;
@@ -59,11 +68,11 @@
     stage = new createjs.Stage("demoCanvas");
     
     createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", stage);
+    createjs.Ticker.addEventListener("tick", tack);
     
     var startCircle = new createjs.Shape();
-    var startText = new createjs.Text("Start", "100px Calibri", randomColor());
-    var strokeText = new createjs.Text("Start", "100px Calibri", "rgb(0,0,0)");
+    var startText = new createjs.Text("Start", "100px robotoFont", randomColor());
+    var strokeText = new createjs.Text("Start", "100px robotoFont", "rgb(255,255,255)");
     
     
     stage.addChild(startCircle);
@@ -71,18 +80,37 @@
     stage.addChild(strokeText);
     
     
-    startText.x = strokeText.x = canvas.width/2 - startText.getBounds().width/2;
-    startText.y = strokeText.y = canvas.height/2 - startText.getBounds().height/2;
-    strokeText.outline = 1;
-    startCircle.graphics.beginFill(randomColor()).drawCircle(canvas.width/2, canvas.height/2, 200);
+    startText.x = strokeText.x = canvas.width/2 - startText.getBounds().width/2 -15;
+    startText.y = strokeText.y = canvas.height/2 - startText.getBounds().height/2 -25;
+    strokeText.outline = 2;
+    startCircle.graphics.beginFill(randomColor()).drawCircle(0, 0, 200);
+    startCircle.x = canvas.width/2;
+    startCircle.y = canvas.height/2;
     startCircle.addEventListener("click",function(){
       stage.removeChild(startCircle);
       stage.removeChild(startText);
       stage.removeChild(strokeText);
+      createjs.Tween.removeAllTweens();
       createCircles();
     });
     
     
+    stage.update();
+    startTween(startCircle, startText, strokeText);
+    //debugger;
+  }
+  
+  function createTimer(){
+    textTimer.y = -20;
+    textTimer.x = canvas.width - textTimer.getBounds().width - 50;
+    stage.addChild(textTimer);
+  }
+  
+  function tack(){
+    if(running){
+      var currentTime = (new Date()).getTime() - startTime;
+      textTimer.text = (currentTime/1000).toFixed(3) + " s";
+    }
     stage.update();
   }
   
@@ -94,28 +122,52 @@
       circle.x = canvas.width/2;
       circle.y = canvas.height/2;
       circle.num = i;
-      circle.addEventListener("click",function(event){clicked(event.target)});
+      circle.addEventListener("mousedown",function(event){clicked(event.target)});
         
       stage.addChild(circle);
       tween(circle);
     }
-
+    startTime = (new Date()).getTime();
+    createTimer();
+    running = true;
+  }
+  
+  function startTween(startCircle, startText, strokeText){
+    var xx = getX(startCircle);
+    var yy = getY(startCircle);
+    var sx = xx - startText.getBounds().width/2 - 15;
+    var sy = yy - startText.getBounds().height/2 - 25;
+    var time = 10000;
+    createjs.Tween.get(startCircle, {override:true}).to({ x: xx, y: yy }, time, createjs.Ease.getPowInOut(1)).call(startTween, [startCircle, startText, strokeText]);
+    createjs.Tween.get(startText, {override:true}).to({ x: sx, y: sy }, time, createjs.Ease.getPowInOut(1));
+    createjs.Tween.get(strokeText, {override:true}).to({ x: sx, y: sy }, time, createjs.Ease.getPowInOut(1));
   }
   
   function tween(circle){  
     createjs.Tween.get(circle, {override:true}).wait(1).to({ x: getX(circle), y: getY(circle) }, 1000, createjs.Ease.cubicInOut).call(tween, [circle]);
-   // console.log("==========================================================================================");
   }
   
   function clicked(circle){
-    console.log("clicked circle number: "+circle.num)
     stage.removeChild(circle);
+    
+    if(stage.children.length == 1){
+      finished();
+    }
   };
   
-  
-  
+  function finished(){
+    running = false;
+    createjs.Tween.get(textTimer, {override:true}).to({ x: canvas.width/2-textTimer.getBounds().width/2, y: canvas.height/3-textTimer.getBounds().height/2 }, 500, createjs.Ease.getPowInOut(1));
+  }
+    
 </script>
 <body onload="init();" style="display: table-cell;">
   <canvas id="demoCanvas"></canvas>
+  
+  
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-573d49c93c154fbc"></script>
+  
+  <div class="addthis_sharing_toolbox"></div>
+
 </body>
 </html>
