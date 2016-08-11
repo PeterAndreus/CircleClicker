@@ -1,173 +1,243 @@
 <html>
-<style>
-@font-face {
-    font-family: robotoFont;
-    src: url(NotoSans-Regular.ttf);
-}
-</style>
-<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
-<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
-<script>
+    <style>
+        @font-face {
+            font-family: robotoFont;
+            src: url(NotoSans-Regular.ttf);
+        }
+    </style>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+    <script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+    <script>
 
-  var circleR = 30;
-  var circleCount = 20;
-  var startTime;
-  var textTimer = new createjs.Text("00.000 s", "100px robotoFont", randomColor());
-  var running = false;
-  
-  function getRandom(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-  
-  function getX(object){
-    var genMin = -500;
-    var genMax = 500;
-    var min = object.x * -1;
-    var max = document.body.clientWidth - object.x;
-    
-    var ran = getRandom(Math.max(genMin, min), Math.min(genMax, max));
-    
-    var result = object.x + ran;
-    
-    //console.log("X:"+object.x+" \n"+min+"\n"+max+"\n"+ran+"\n"+result)
-    
-    return result;
-  }
-  
-  function getY(object){  
-    var genMin = -500;
-    var genMax = 500;
-    var min = object.y * -1;
-    var max = document.body.clientHeight - object.y;
-    
-    var ran = getRandom(Math.max(genMin, min), Math.min(genMax, max));
-      
-    var result = object.y + ran;
-    //console.log("Y:"+object.y+" \n"+min+"\n"+max+"\n"+ran+"\n"+result)
-    return result;
-  }
-  
-  function randomColor(){
-  var r = Math.round(getRandom(0, 255));
-  var g = Math.round(getRandom(0, 255));
-  var b = Math.round(getRandom(0, 255));
-  var a = 0.7;
-  
-  var result =  "rgba("+r+","+g+","+b+","+a+")"
-  
-  //console.log(result);
-  
-  return result;
-  }
-  
-  function init() {
-    canvas = document.getElementById("demoCanvas");
-    canvas.width = document.body.clientWidth; //document.width is obsolete
-    canvas.height = document.body.clientHeight; //document.height is obsolete
+        var circleR = 30;
+        var circleCount = 1;
+        var startTime;
+        var textTimer = new createjs.Text("00.000 s", "100px robotoFont", randomColor());
+        var running = false;
 
-    stage = new createjs.Stage("demoCanvas");
-    
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", tack);
-    
-    var startCircle = new createjs.Shape();
-    var startText = new createjs.Text("Start", "100px robotoFont", randomColor());
-    var strokeText = new createjs.Text("Start", "100px robotoFont", "rgb(255,255,255)");
-    
-    
-    stage.addChild(startCircle);
-    stage.addChild(startText);
-    stage.addChild(strokeText);
-    
-    
-    startText.x = strokeText.x = canvas.width/2 - startText.getBounds().width/2 -15;
-    startText.y = strokeText.y = canvas.height/2 - startText.getBounds().height/2 -25;
-    strokeText.outline = 2;
-    startCircle.graphics.beginFill(randomColor()).drawCircle(0, 0, 200);
-    startCircle.x = canvas.width/2;
-    startCircle.y = canvas.height/2;
-    startCircle.addEventListener("click",function(){
-      stage.removeChild(startCircle);
-      stage.removeChild(startText);
-      stage.removeChild(strokeText);
-      createjs.Tween.removeAllTweens();
-      createCircles();
-    });
-    
-    
-    stage.update();
-    startTween(startCircle, startText, strokeText);
-    //debugger;
-  }
-  
-  function createTimer(){
-    textTimer.y = -20;
-    textTimer.x = canvas.width - textTimer.getBounds().width - 50;
-    stage.addChild(textTimer);
-  }
-  
-  function tack(){
-    if(running){
-      var currentTime = (new Date()).getTime() - startTime;
-      textTimer.text = (currentTime/1000).toFixed(3) + " s";
-    }
-    stage.update();
-  }
-  
-  function createCircles(){
-    for(var i=0; i<circleCount; i++){
-      var color = randomColor();
-      var circle = new createjs.Shape();
-      circle.graphics.beginFill(color).drawCircle(0, 0, circleR);
-      circle.x = canvas.width/2;
-      circle.y = canvas.height/2;
-      circle.num = i;
-      circle.addEventListener("mousedown",function(event){clicked(event.target)});
+        function getRandom(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function getX(object) {
+            var genMin = -500;
+            var genMax = 500;
+            var min = object.x * -1;
+            var max = document.body.clientWidth - object.x;
+
+            var ran = getRandom(Math.max(genMin, min), Math.min(genMax, max));
+
+            var result = object.x + ran;
+            return result;
+        }
+
+        function getY(object) {
+            var genMin = -500;
+            var genMax = 500;
+            var min = object.y * -1;
+            var max = document.body.clientHeight - object.y;
+
+            var ran = getRandom(Math.max(genMin, min), Math.min(genMax, max));
+
+            var result = object.y + ran;
+            return result;
+        }
+
+        function randomColor() {
+            var r = Math.round(getRandom(0, 200));
+            var g = Math.round(getRandom(0, 200));
+            var b = Math.round(getRandom(0, 200));
+            var a = 0.7;
+
+            var result = "rgba(" + r + "," + g + "," + b + "," + a + ")"
+
+            return result;
+        }
+
+        function init() {
+            canvas = document.getElementById("demoCanvas");
+            canvas.width = document.body.clientWidth; //document.width is obsolete
+            canvas.height = document.body.clientHeight; //document.height is obsolete
+
+            stage = new createjs.Stage("demoCanvas");
+
+            createjs.Ticker.setFPS(60);
+            createjs.Ticker.addEventListener("tick", tack);
+
+            var startCircle = new createjs.Shape();
+            var startText = new createjs.Text("Start", "100px robotoFont", randomColor());
+            var strokeText = new createjs.Text("Start", "100px robotoFont", "rgb(255,255,255)");
+
+
+            stage.addChild(startCircle);
+            stage.addChild(startText);
+            stage.addChild(strokeText);
+
+
+            startText.x = strokeText.x = canvas.width / 2 - startText.getBounds().width / 2 ;
+            startText.y = strokeText.y = canvas.height / 2 - startText.getBounds().height / 2 ;
+            strokeText.outline = 2;
+            startCircle.graphics.beginFill(randomColor()).drawCircle(0, 0, 200);
+            startCircle.x = canvas.width / 2;
+            startCircle.y = canvas.height / 2;
+            startCircle.addEventListener("click", function() {
+                stage.removeChild(startCircle);
+                stage.removeChild(startText);
+                stage.removeChild(strokeText);
+                createjs.Tween.removeAllTweens();
+                createCircles();
+            });
+
+
+            stage.update();
+            startTween(startCircle, startText, strokeText);
+            //debugger;
+        }
+
+        function createTimer() {
+            textTimer.y = -20;
+            textTimer.x = canvas.width - textTimer.getBounds().width - 50;
+            stage.addChild(textTimer);
+        }
+
+        function tack() {
+            if (running) {
+                var currentTime = (new Date()).getTime() - startTime;
+                textTimer.text = (currentTime / 1000).toFixed(3) + " s";
+            }
+            stage.update();
+        }
+
+        function createCircles() {
+            generateCircles(circleCount, clicked, tween);
+            startTime = (new Date()).getTime();
+            createTimer();
+            running = true;
+        }
+
+        function startTween(startCircle, startText, strokeText) {
+            var xx = getX(startCircle);
+            var yy = getY(startCircle);
+            var sx = xx - startText.getBounds().width / 2 - 15;
+            var sy = yy - startText.getBounds().height / 2 - 25;
+            var time = 10000;
+            createjs.Tween.get(startCircle, {override: true}).to({x: xx, y: yy}, time, createjs.Ease.getPowInOut(1)).call(startTween, [startCircle, startText, strokeText]);
+            createjs.Tween.get(startText, {override: true}).to({x: sx, y: sy}, time, createjs.Ease.getPowInOut(1));
+            createjs.Tween.get(strokeText, {override: true}).to({x: sx, y: sy}, time, createjs.Ease.getPowInOut(1));
+        }
+
+        function tween(circle) {
+            createjs.Tween.get(circle, {override: true}).wait(1).to({x: getX(circle), y: getY(circle)}, 1000, createjs.Ease.cubicInOut).call(tween, [circle]);
+        }
         
-      stage.addChild(circle);
-      tween(circle);
-    }
-    startTime = (new Date()).getTime();
-    createTimer();
-    running = true;
-  }
-  
-  function startTween(startCircle, startText, strokeText){
-    var xx = getX(startCircle);
-    var yy = getY(startCircle);
-    var sx = xx - startText.getBounds().width/2 - 15;
-    var sy = yy - startText.getBounds().height/2 - 25;
-    var time = 10000;
-    createjs.Tween.get(startCircle, {override:true}).to({ x: xx, y: yy }, time, createjs.Ease.getPowInOut(1)).call(startTween, [startCircle, startText, strokeText]);
-    createjs.Tween.get(startText, {override:true}).to({ x: sx, y: sy }, time, createjs.Ease.getPowInOut(1));
-    createjs.Tween.get(strokeText, {override:true}).to({ x: sx, y: sy }, time, createjs.Ease.getPowInOut(1));
-  }
-  
-  function tween(circle){  
-    createjs.Tween.get(circle, {override:true}).wait(1).to({ x: getX(circle), y: getY(circle) }, 1000, createjs.Ease.cubicInOut).call(tween, [circle]);
-  }
-  
-  function clicked(circle){
-    stage.removeChild(circle);
-    
-    if(stage.children.length == 1){
-      finished();
-    }
-  };
-  
-  function finished(){
-    running = false;
-    createjs.Tween.get(textTimer, {override:true}).to({ x: canvas.width/2-textTimer.getBounds().width/2, y: canvas.height/3-textTimer.getBounds().height/2 }, 500, createjs.Ease.getPowInOut(1));
-  }
-    
-</script>
-<body onload="init();" style="display: table-cell;">
-  <canvas id="demoCanvas"></canvas>
-  
-  
-  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-573d49c93c154fbc"></script>
-  
-  <div class="addthis_sharing_toolbox"></div>
+        function bgTween(circle){
+            createjs.Tween.get(circle, {override: true}).to({x: getX(circle), y: getY(circle), alpha:0.15}, getRandom(2000, 6000), createjs.Ease.quadInOut).call(bgTween, [circle]);
+        }
+        
+        function shareTween(circle){
+	    createjs.Tween.get(circle, {override: true}).to({x: getX(circle), y: getY(circle), alpha:1}, getRandom(4000, 8000), createjs.Ease.quadInOut).call(shareTween, [circle]);
+        }
 
-</body>
+        function clicked(circle) {
+            stage.removeChild(circle);
+
+            if (stage.children.length == 1) {
+                finished();
+            }
+        }
+
+        function finished() {
+            running = false;
+            createjs.Tween.get(textTimer, {override: true}).to({x: canvas.width / 2 - textTimer.getBounds().width / 2, y: canvas.height / 3 - textTimer.getBounds().height / 2}, 500, createjs.Ease.getPowInOut(1));
+            createBgCircles();
+            createFBCircle();
+            createRestartCircle();
+        }
+        
+        function share(){        
+	  window.open(
+	    'https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fandreus.valec.net%2Fstuff%2Fclicker&amp;src=sdkpreparse',
+	    '_blank' 
+	  );
+        }
+        
+        function createFBCircle(){
+	  var fbCircle = new createjs.Bitmap("fb.png");
+	  fbCircle.x = canvas.width/2-100;
+	  fbCircle.y = canvas.height/2;
+	  fbCircle.alpha = 0;
+	  fbCircle.addEventListener("mousedown", function(event) {
+	    share();
+	  });
+	  stage.swapChildrenAt(0, stage.children.length - 1);
+	  stage.addChildAt(fbCircle, stage.children.length - 2);
+	  shareTween(fbCircle);
+        }
+        
+        function createRestartCircle(){
+	  var restartCircle = new createjs.Bitmap("restart.png");
+	  restartCircle.x = canvas.width/2+100;
+	  restartCircle.y = canvas.height/2;
+	  restartCircle.alpha = 0;
+	  restartCircle.addEventListener("mousedown", function(event) {
+	    location.reload();
+	  });
+	  stage.addChildAt(restartCircle, stage.children.length - 2);
+	  shareTween(restartCircle);
+        }
+        
+        function createBgCircles(){
+	  generateCircles(5, null, bgTween, bgTopCircle);
+	  generateCircles(5, null, bgTween, bgBottomCircle);
+	  generateCircles(5, null, bgTween, bgLeftCircle);
+	  generateCircles(5, null, bgTween, bgRightCircle);
+        }
+        
+        function bgTopCircle(circle){
+	  circle.y = 0;
+	  circle.alpha = 0;
+        }
+        function bgBottomCircle(circle){
+	  circle.y = canvas.height;
+	  circle.alpha = 0;
+        }
+        function bgLeftCircle(circle){
+	  circle.x = 0
+	  circle.alpha = 0;
+	}
+	function bgRightCircle(circle){
+	  circle.x = canvas.width;
+	  circle.alpha = 0;
+	}
+        
+        function generateCircles(count, clickCallback, tweenCallback, circleCallback){
+	  for (var i = 0; i < count; i++) {
+                var color = randomColor();
+                var circle = new createjs.Shape();
+                circle.graphics.beginFill(color).drawCircle(0, 0, circleR);
+                circle.x = canvas.width / 2;
+                circle.y = canvas.height / 2;
+                circle.num = i;
+                if(circleCallback){
+		  circleCallback(circle);
+                }
+                if(clickCallback){
+		  circle.addEventListener("mousedown", function(event) {
+                    clickCallback(event.target)
+		  });
+                }
+
+                stage.addChild(circle);
+                if(tweenCallback){
+		  tweenCallback(circle);
+                }
+            }
+        }
+
+
+    </script>
+    
+    <body onload="init();" style="display: table-cell;">
+        <canvas id="demoCanvas"></canvas>
+    </body>
 </html>
