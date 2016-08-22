@@ -1,8 +1,15 @@
 <html>
+  <head>
+    <meta property="og:url"                content="http://andreus.valec.net/stuff/clicker" />
+    <meta property="og:type"               content="game" />
+    <meta property="og:title"              content="Circle Clicker" />
+    <meta property="og:description"        content="How quick can you collect'em all?" />
+    <meta property="og:image"              content="" />
+  </head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <style>
         @font-face {
-            font-family: robotoFont;
-            src: url(NotoSans-Regular.ttf);
+            font-family: 'Roboto', sans-serif;
         }
     </style>
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
@@ -10,9 +17,9 @@
     <script>
 
         var circleR = 30;
-        var circleCount = 1;
+        var circleCount = 20;
         var startTime;
-        var textTimer = new createjs.Text("00.000 s", "100px robotoFont", randomColor());
+        var textTimer = new createjs.Text("00.000 s", "100px Roboto", randomColor());
         var running = false;
 
         function getRandom(min, max) {
@@ -60,27 +67,30 @@
             canvas.height = document.body.clientHeight; //document.height is obsolete
 
             stage = new createjs.Stage("demoCanvas");
+            createjs.Touch.enable(stage);
 
             createjs.Ticker.setFPS(60);
             createjs.Ticker.addEventListener("tick", tack);
 
-            var startCircle = new createjs.Shape();
-            var startText = new createjs.Text("Start", "100px robotoFont", randomColor());
-            var strokeText = new createjs.Text("Start", "100px robotoFont", "rgb(255,255,255)");
+             startCircle = new createjs.Shape();
+             startText = new createjs.Text("Start", "100px Roboto", randomColor());
+             strokeText = new createjs.Text("Start", "100px Roboto", "rgb(255,255,255)");
 
 
             stage.addChild(startCircle);
             stage.addChild(startText);
             stage.addChild(strokeText);
 
-
-            startText.x = strokeText.x = canvas.width / 2 - startText.getBounds().width / 2 ;
-            startText.y = strokeText.y = canvas.height / 2 - startText.getBounds().height / 2 ;
-            strokeText.outline = 2;
             startCircle.graphics.beginFill(randomColor()).drawCircle(0, 0, 200);
+            strokeText.outline = 2;
+
+           
             startCircle.x = canvas.width / 2;
             startCircle.y = canvas.height / 2;
-            startCircle.addEventListener("click", function() {
+            console.log("width: "+ canvas.width);
+            console.log("height: "+canvas.height);
+            
+            startCircle.on("mousedown", function() {
                 stage.removeChild(startCircle);
                 stage.removeChild(startText);
                 stage.removeChild(strokeText);
@@ -95,7 +105,6 @@
         }
 
         function createTimer() {
-            textTimer.y = -20;
             textTimer.x = canvas.width - textTimer.getBounds().width - 50;
             stage.addChild(textTimer);
         }
@@ -104,6 +113,9 @@
             if (running) {
                 var currentTime = (new Date()).getTime() - startTime;
                 textTimer.text = (currentTime / 1000).toFixed(3) + " s";
+            }else{
+	      startText.x = strokeText.x = startCircle.x - startText.getBounds().width / 2 ;
+	      startText.y = strokeText.y = startCircle.y - startText.getBounds().height / 2 ;
             }
             stage.update();
         }
@@ -122,8 +134,6 @@
             var sy = yy - startText.getBounds().height / 2 - 25;
             var time = 10000;
             createjs.Tween.get(startCircle, {override: true}).to({x: xx, y: yy}, time, createjs.Ease.getPowInOut(1)).call(startTween, [startCircle, startText, strokeText]);
-            createjs.Tween.get(startText, {override: true}).to({x: sx, y: sy}, time, createjs.Ease.getPowInOut(1));
-            createjs.Tween.get(strokeText, {override: true}).to({x: sx, y: sy}, time, createjs.Ease.getPowInOut(1));
         }
 
         function tween(circle) {
@@ -148,6 +158,11 @@
 
         function finished() {
             running = false;
+            var ogImage = document.getElementsByTagName("meta")[4];
+	    var image = new Image();
+	    image.src = canvas.toDataURL();
+	    ogImage.content = image;
+            
             createjs.Tween.get(textTimer, {override: true}).to({x: canvas.width / 2 - textTimer.getBounds().width / 2, y: canvas.height / 3 - textTimer.getBounds().height / 2}, 500, createjs.Ease.getPowInOut(1));
             createBgCircles();
             createFBCircle();
@@ -166,7 +181,7 @@
 	  fbCircle.x = canvas.width/2-100;
 	  fbCircle.y = canvas.height/2;
 	  fbCircle.alpha = 0;
-	  fbCircle.addEventListener("mousedown", function(event) {
+	  fbCircle.on("mousedown", function(event) {
 	    share();
 	  });
 	  stage.swapChildrenAt(0, stage.children.length - 1);
@@ -179,7 +194,7 @@
 	  restartCircle.x = canvas.width/2+100;
 	  restartCircle.y = canvas.height/2;
 	  restartCircle.alpha = 0;
-	  restartCircle.addEventListener("mousedown", function(event) {
+	  restartCircle.on("mousedown", function(event) {
 	    location.reload();
 	  });
 	  stage.addChildAt(restartCircle, stage.children.length - 2);
@@ -222,7 +237,7 @@
 		  circleCallback(circle);
                 }
                 if(clickCallback){
-		  circle.addEventListener("mousedown", function(event) {
+		  circle.on("mousedown", function(event) {
                     clickCallback(event.target)
 		  });
                 }
