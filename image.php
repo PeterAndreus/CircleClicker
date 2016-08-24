@@ -14,4 +14,3 @@ imagepng( $my_img );
 imagecolordeallocate( $text_color );
 imagedestroy( $my_img );
 ?>
-

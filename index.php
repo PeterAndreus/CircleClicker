@@ -10,12 +10,14 @@
       $titleContent = 'How fast are your reflexes?';
     }
   ?>
+    
     <meta property="og:type"               content="game" />
     <meta property="og:title"              content="<?php echo $titleContent ?>" />
     <meta property="og:description"        content="Just click on circles and collect'em all!!" />
     <meta property="og:image"              content="<?php echo $imgContent ?>" />
     <meta property="og:image:width"        content="1200" />
     <meta property="og:image:height"        content="630" />
+    <meta property="fb:app_id"        content="1036493763071256" />
   </head>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <style>
@@ -197,7 +199,7 @@
         function share(){ 
 	  FB.ui({
 	    method: 'share',
-	    href: 'http://andreus.valec.net/stuff/clicker?t='+textTimer.time+'&nocache='+new Date().getTime(),
+	    href: 'http://andreus.valec.net/stuff/clicker/redirect.php?t='+textTimer.time+'&nocache='+new Date().getTime(),
 	  }, function(response){});
         }
         
