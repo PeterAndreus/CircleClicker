@@ -1,10 +1,21 @@
 <html>
   <head>
-    <meta property="og:url"                content="http://andreus.valec.net/stuff/clicker" />
+  <?php
+    if( $_GET["t"]){
+      $time = $_GET["t"];
+      $imgContent = 'http://andreus.valec.net/stuff/clicker/image.php?t='.$time;
+      $titleContent = 'I made it in '. $time/1000 .' s! How about you?';
+    }else{
+      $imgContent = 'http://andreus.valec.net/stuff/clicker/sources/default.png';
+      $titleContent = 'How fast are your reflexes?';
+    }
+  ?>
     <meta property="og:type"               content="game" />
-    <meta property="og:title"              content="Circle Clicker" />
-    <meta property="og:description"        content="How quick can you collect'em all?" />
-    <meta property="og:image"              content="" />
+    <meta property="og:title"              content="<?php echo $titleContent ?>" />
+    <meta property="og:description"        content="Just click on circles and collect'em all!!" />
+    <meta property="og:image"              content="<?php echo $imgContent ?>" />
+    <meta property="og:image:width"        content="1200" />
+    <meta property="og:image:height"        content="630" />
   </head>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <style>
@@ -113,6 +124,7 @@
             if (running) {
                 var currentTime = (new Date()).getTime() - startTime;
                 textTimer.text = (currentTime / 1000).toFixed(3) + " s";
+                textTimer.time = ((currentTime / 1000).toFixed(3))*1000;
             }else{
 	      startText.x = strokeText.x = startCircle.x - startText.getBounds().width / 2 ;
 	      startText.y = strokeText.y = startCircle.y - startText.getBounds().height / 2 ;
@@ -158,10 +170,6 @@
 
         function finished() {
             running = false;
-            var ogImage = document.getElementsByTagName("meta")[4];
-	    var image = new Image();
-	    image.src = canvas.toDataURL();
-	    ogImage.content = image;
             
             createjs.Tween.get(textTimer, {override: true}).to({x: canvas.width / 2 - textTimer.getBounds().width / 2, y: canvas.height / 3 - textTimer.getBounds().height / 2}, 500, createjs.Ease.getPowInOut(1));
             createBgCircles();
@@ -169,11 +177,11 @@
             createRestartCircle();
         }
         
-        function share(){        
-	  window.open(
-	    'https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fandreus.valec.net%2Fstuff%2Fclicker&amp;src=sdkpreparse',
-	    '_blank' 
-	  );
+        function share(){ 
+	  FB.ui({
+	    method: 'share',
+	    href: 'http://andreus.valec.net/stuff/clicker?t='+textTimer.time+'&nocache='+new Date().getTime(),
+	  }, function(response){});
         }
         
         function createFBCircle(){
@@ -253,6 +261,27 @@
     </script>
     
     <body onload="init();" style="display: table-cell;">
+    
+    
+    <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1036493763071256',
+      xfbml      : true,
+      version    : 'v2.7'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+    
+    
         <canvas id="demoCanvas"></canvas>
     </body>
 </html>
