@@ -88,13 +88,13 @@
         }
 
         function init() {
-            canvas = document.getElementById("demoCanvas");
+            canvas = document.getElementById("circleCanvas");
 	    window.addEventListener('orientationchange', function(){
 	      recalculateCanvasDimensions()}
 	    );        
             recalculateCanvasDimensions();
 
-            stage = new createjs.Stage("demoCanvas");
+            stage = new createjs.Stage("circleCanvas");
             createjs.Touch.enable(stage);
 
             createjs.Ticker.setFPS(60);
@@ -115,6 +115,10 @@
            
             startCircle.x = canvas.width / 2;
             startCircle.y = canvas.height / 2;
+            
+	    startText.x = strokeText.x = startCircle.x - startText.getBounds().width / 2 ;
+	    startText.y = strokeText.y = startCircle.y - startText.getBounds().height / 2 ;
+	      
             console.log("width: "+ canvas.width);
             console.log("height: "+canvas.height);
             
@@ -302,7 +306,7 @@
     
     <!-- FB SHARE -->
     
-        <canvas id="demoCanvas"></canvas>
+        <canvas id="circleCanvas"></canvas>
         
         
     <!-- DONATE -->
