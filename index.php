@@ -79,11 +79,18 @@
 
             return result;
         }
+        
+        function recalculateCanvasDimensions(){
+            canvas.width = document.body.clientWidth; //document.width is obsolete
+            canvas.height = document.body.clientHeight; //document.height is obsolete
+        }
 
         function init() {
             canvas = document.getElementById("demoCanvas");
-            canvas.width = document.body.clientWidth; //document.width is obsolete
-            canvas.height = document.body.clientHeight; //document.height is obsolete
+	    window.addEventListener('orientationchange', function(){
+	      recalculateCanvasDimensions()}
+	    );        
+            recalculateCanvasDimensions();
 
             stage = new createjs.Stage("demoCanvas");
             createjs.Touch.enable(stage);
@@ -306,6 +313,19 @@
 </form>
 
     <!-- DONATE -->
+    
+    <!-- GOOGLE ANALYTICS -->
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-83064941-1', 'auto');
+  ga('send', 'pageview');
+
+    </script>
+
+    <!-- GOOGLE ANALYTICS -->
     </body>
 </html>
